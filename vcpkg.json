@@ -3,6 +3,7 @@
     "name": "dead-by-dining-ui",
     "version-string": "1.0.0",
     "dependencies": [
-        "commonlibsse-ng"
+      "commonlibsse-ng",
+      "simpleini"
     ]
 }

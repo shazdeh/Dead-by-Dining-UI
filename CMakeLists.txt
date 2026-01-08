@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 # Set your project name. This will be the name of your SKSE .dll file.
-project(HelloWorld VERSION 0.0.1 LANGUAGES CXX)
+project(DeadByDiningUI VERSION 0.0.1 LANGUAGES CXX)
 
 # #
 # YOU DO NOT NEED TO EDIT ANYTHING BELOW HERE
@@ -28,7 +28,7 @@ if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")
 endif()
 
 # Otherwise, you can set OUTPUT_FOLDER to any place you'd like :)
-# set(OUTPUT_FOLDER "C:/path/to/any/folder")
+set(OUTPUT_FOLDER "I:/SME/mods/Dead By Dining - Show in UI")
 
 # Setup your SKSE plugin as an SKSE plugin!
 find_package(CommonLibSSE CONFIG REQUIRED)
@@ -52,6 +52,7 @@ if(DEFINED OUTPUT_FOLDER)
         POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E make_directory "${DLL_FOLDER}"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/dist/." "${OUTPUT_FOLDER}"
         VERBATIM
     )
 

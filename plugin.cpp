@@ -1,4 +1,5 @@
 ﻿#include "SkyPrompt/API.hpp";
+#include "SimpleIni.h";
 
 TESGlobal* hotkey;
 std::vector<BGSKeyword*> allowedFood;
@@ -6,6 +7,7 @@ SkyPromptAPI::Prompt poisonPrompt{"$DBDUI_ADD", 0, 0, SkyPromptAPI::PromptType::
 std::array<SkyPromptAPI::Prompt, 1> prompts = {poisonPrompt};
 SkyPromptAPI::ClientID clientID;
 std::pair<RE::INPUT_DEVICE, uint32_t> key{INPUT_DEVICE::kKeyboard, 0};
+bool bFloatingPrompt = true;
 
 class MyPromptSink : public SkyPromptAPI::PromptSink {
 public:
@@ -35,7 +37,9 @@ struct mySink : public RE::BSTEventSink<SKSE::CrosshairRefEvent> {
         if (ref) {
             if (auto* base = ref ? ref->GetBaseObject() : nullptr) {
                 if (base->GetFormType() == FormType::AlchemyItem && CanBePoisoned(base)) {
-                    prompts[0].refid = ref->GetFormID();
+                    if (bFloatingPrompt) {
+                        prompts[0].refid = ref->GetFormID();
+                    }
                     key.second = (uint32_t)hotkey->value;
                     prompts[0].button_key = std::span{&key, 1};
                     SkyPromptAPI::SendPrompt(&g_PromptSink, clientID);
@@ -56,6 +60,12 @@ void setup() {
         allowedFood.reserve(1);
         allowedFood.push_back(TESForm::LookupByEditorID<BGSKeyword>("DBD_Drink"));
         clientID = SkyPromptAPI::RequestClientID();
+
+        CSimpleIniA ini;
+        std::string filePath = "Data/SKSE/Plugins/DeadByDiningUI.ini";
+        if (ini.LoadFile(filePath.c_str()) == SI_OK) {
+            bFloatingPrompt = ini.GetBoolValue("Main", "bFloatingPrompt", true);
+        }
     }
 }
 
